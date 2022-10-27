@@ -4,6 +4,7 @@ from calendar import monthrange
 
 import pandas as pd
 import openpyxl
+from openpyxl.styles import Font
 from openpyxl.styles.numbers import BUILTIN_FORMATS
 
 from selenium import webdriver
@@ -182,10 +183,25 @@ class Moex:
             listing = df_excel[column].tolist()
             result_lst.append(listing)
 
-        result_column = [float(x.replace(',', '.')) * float(y.replace(',', '.'))
+        result_column = [float(x.replace(',', '.')) / float(y.replace(',', '.'))
                          for x, y in zip(result_lst[1], result_lst[4])]
         df = pd.DataFrame(result_column, columns=['Результат'])
         return df
+
+    @staticmethod
+    def auto_sum(column_num, column_literal, excel_path):
+        # Открываем этот файл
+        wb = openpyxl.open(excel_path)
+        # Выбираем лист для работы
+        ws = wb.active
+        # Создаем ячейку с координатами для результатов расчета
+        cell = ws.cell(row=ws.max_row + 1, column=column_num)
+        # Пишем формулу в ячейку
+        cell.value = f"=СУММ({column_literal}2:{column_literal}{{}})".format(ws.max_row-1)
+        # Изменяем стиль шрифта
+        cell.font = Font(bold=True)
+        # Сохраняем результат в файл
+        wb.save(f'{excel_path}{{}}'.format(excel_path.split('.')[0]))
 
     @staticmethod
     def xlsx_num_format(cell_literal, excel_path):
@@ -251,5 +267,6 @@ if __name__ == '__main__':
     moex2.xlsx_append(moex2.calculation(PATH), PATH)
     moex2.close_browser(driver2)
     # 10. Формат чисел – финансовый,
-    # 11. Проверить, что автосумма в Excel распознаёт ячейки как числовой формат:
     Moex.xlsx_num_format('G', PATH)
+    # 11. Проверить, что автосумма в Excel распознаёт ячейки как числовой формат:
+    Moex.auto_sum(7, 'G', PATH)

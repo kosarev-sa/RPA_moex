@@ -22,7 +22,8 @@ password = PASSWORD
 recipients = ['kosarev-sa@mail.ru', 'mrsupersirius@yandex.ru']
 sender = 'mrsupersirius@yandex.ru'
 subject = 'Тестовое задание - Гринатом'
-text = f'Файл <b>{PATH}</b> содержит <h1>{Moex.num_rows(PATH)}</h1> c данными.'
+text = f'Файл <b>{PATH}</b> содержит <h1>{Moex.num_rows(PATH)}</h1> c данными.<br><br>' \
+       f'<i>Сергей Косарев</i>'
 html = '<html><head></head><body><p>' + text + '</p></body></html>'
 
 filepath = PATH
